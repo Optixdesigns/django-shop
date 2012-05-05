@@ -9,5 +9,5 @@ from djutils.utils.helpers import load_class
 #==============================================================================
 # Extensibility
 #==============================================================================
-PRODUCT_MODEL = getattr(settings, 'SHOP_PRODUCT_MODEL', 'shop.models.defaults.product.Product')
-Product = load_class(PRODUCT_MODEL, 'SHOP_PRODUCT_MODEL')
+PRODUCT_MODEL = getattr(settings, 'SHOP_PRODUCT_MODEL', 'shop.products.defaults.product.Product')
+Product = load_class(PRODUCT_MODEL)

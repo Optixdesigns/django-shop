@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 from django.contrib.auth.models import AnonymousUser
 from django.db import models, transaction
 from django.db.models.aggregates import Count
 
-from shop.order_signals import processing
+#from shop.order_signals import processing
 
 
 #==============================================================================
