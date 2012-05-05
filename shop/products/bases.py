@@ -18,7 +18,7 @@ class BaseProduct(Node):
 
     class Meta(object):
         abstract = True
-        app_label = 'shop'
+        app_label = 'products'
         verbose_name = _('Product')
         verbose_name_plural = _('Products')
 

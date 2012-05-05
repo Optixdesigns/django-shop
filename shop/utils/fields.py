@@ -30,4 +30,4 @@ class CurrencyField(DecimalField):
         field_class = "django.db.models.fields.DecimalField"
         args, kwargs = introspector(self)
         # That's our definition!
-        return (field_class, args, kwargs)
+        return (field_class, args, kwargs)        
