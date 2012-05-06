@@ -14,7 +14,7 @@ class BaseProduct(Node):
     on the "base model" and not on an added property
     """
 
-    unit_price = CurrencyField(verbose_name=_('Unit price'))
+    sku = models.CharField(max_length=255)
 
     class Meta(object):
         abstract = True
@@ -34,8 +34,12 @@ class BaseProduct(Node):
         """
         return self.unit_price
 
-    def get_name(self):
+    def get_title(self):
         """
-        Return the name of this Product (provided for extensibility)
+        Return the title of this Product (provided for extensibility)
         """
-        return self.name
+        return self.title
+
+class ProductPrice(models.Model):
+    price = CurrencyField(verbose_name=_('Unit price'))
+    pass
