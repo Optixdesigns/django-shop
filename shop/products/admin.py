@@ -1,7 +1,14 @@
 from django.contrib import admin
 from hub.node.admin import NodeAdmin
 from hub.node.models import Node
+from shop.products.models import Product
 
 class BaseProductAdmin(NodeAdmin):
-	extra_fieldsets = ((None, {"fields": ("unit_price",)}),)
+	extra_fieldsets = ((None, {"fields": ("price",)}),)
 	pass
+
+class ProductAdmin(BaseProductAdmin):
+	pass
+
+admin.site.register(Product, ProductAdmin)
+

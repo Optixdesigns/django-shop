@@ -5,7 +5,6 @@ from django.views.generic.base import TemplateResponseMixin
 
 class ProductDetailView(DetailView):
     model = Product
-    #template_name = 'shop/products/product_detail.html'
 
 class ProductListView(ListView):
     model = Product
