@@ -5,6 +5,7 @@ from shop.products.models import Product
 
 class BaseProductAdmin(NodeAdmin):
 	extra_fieldsets = ((None, {"fields": ("price",)}),)
+	list_display = NodeAdmin.list_display + ("price",)
 	pass
 
 class ProductAdmin(BaseProductAdmin):
