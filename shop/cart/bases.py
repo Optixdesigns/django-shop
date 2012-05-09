@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 #from shop.cart.models import CART_MODEL
 from shop.utils.helpers import get_model_string
 from shop.cart.managers import CartManager
+from django.utils.datastructures import SortedDict
+from decimal import Decimal
 
 class BaseCart(models.Model):
     """
@@ -17,13 +19,18 @@ class BaseCart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    objects = CartManager()
+    def __init__(self, *args, **kwargs):
+      super(BaseCart, self).__init__(*args, **kwargs)
+      # That will hold things like tax totals or total discount
+      self.subtotal_price = Decimal('0.0')
+      self.total_price = Decimal('0.0')
+      #self.current_total = Decimal('0.0')  # used by cart modifiers
+      self.modifiers = SortedDict()
+      #self.extra_price_fields = []  # List of tuples (label, value)
+      #self._updated_cart_items = None
+      self.update()
 
-    class Meta(object):
-        abstract = True
-        app_label = 'cart'
-        verbose_name = _('Cart')
-        verbose_name_plural = _('Carts')
+    objects = CartManager()
 
     def add(self, product, quantity=1):
       """
@@ -33,11 +40,41 @@ class BaseCart(models.Model):
           product = product,
           defaults = {'quantity': quantity,},
       )
+
       if not created:
           item.quantity += quantity
           item.save()
-      #self.reset_cached_items()
+
+      self.save()
       return item
+
+    def update(self):
+      '''
+      Update cart
+      '''
+      self.subtotal_price = Decimal('0.0')  # Reset the subtotal
+      self.total_price = Decimal('0.0')  # Reset the total price
+
+      for item in self.items.all():
+        self.subtotal_price += item.line_total
+      
+      #for modifier in get_cart_modifiers():
+          #total_price = modifier(self, total_price)
+      #print self.subtotal_price
+      self.total_price = self.subtotal_price
+
+    def clear(self):
+      """
+      Remove a carts content
+      """
+      self.items.all().delete()
+      #self.modifiers.clear()
+
+    class Meta(object):
+      abstract = True
+      app_label = 'cart'
+      verbose_name = _('Cart')
+      verbose_name_plural = _('Carts')
 
 class BaseCartItem(models.Model):
     """
@@ -48,8 +85,38 @@ class BaseCartItem(models.Model):
     quantity = models.IntegerField()
     product = models.ForeignKey(get_model_string('Product'))
 
+    def __init__(self, *args, **kwargs):
+      super(BaseCartItem, self).__init__(*args, **kwargs)
+      self.line_subtotal = Decimal('0.0')
+      self.line_total = Decimal('0.0')
+
+      self.update()
+      #self.current_total = Decimal('0.0')  # Used by cart modifiers
+
+    def update(self):
+      '''
+      Update cart item
+      '''
+      self.line_subtotal = self.product.get_price() * self.quantity
+      self.current_total = self.line_subtotal
+      #print self.product.get_price()
+      #print self.current_total
+      #for modifier in cart_modifiers_pool.get_modifiers_list():
+      # We now loop over every registered price modifier,
+      # most of them will simply add a field to extra_payment_fields
+      #modifier.process_cart_item(self, state)
+
+      self.line_total = self.current_total
+      #print self.line_total 
+
+      #self.cart.update() # update cart
+
+    #def save(self, *args, **kwargs):
+      #super(BaseCartItem, self).save(*args, **kwargs)
+      #self.update()
+
     class Meta(object):
-        abstract = True
-        app_label = 'cart'
-        verbose_name = _('Cart item')
-        verbose_name_plural = _('Cart items')
+      abstract = True
+      app_label = 'cart'
+      verbose_name = _('Cart item')
+      verbose_name_plural = _('Cart items')
