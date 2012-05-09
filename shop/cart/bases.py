@@ -25,6 +25,20 @@ class BaseCart(models.Model):
         verbose_name = _('Cart')
         verbose_name_plural = _('Carts')
 
+    def add(self, product, quantity=1):
+      """
+      Add or update a cart item
+      """
+      item, created = self.items.get_or_create(
+          product = product,
+          defaults = {'quantity': quantity,},
+      )
+      if not created:
+          item.quantity += quantity
+          item.save()
+      #self.reset_cached_items()
+      return item
+
 class BaseCartItem(models.Model):
     """
     This is a holder for the quantity of items in the cart and, obviously, a
@@ -39,27 +53,3 @@ class BaseCartItem(models.Model):
         app_label = 'cart'
         verbose_name = _('Cart item')
         verbose_name_plural = _('Cart items')
-
-    def __init__(self, *args, **kwargs):
-        # That will hold extra fields to display to the user
-        # (ex. taxes, discount)
-        super(BaseCartItem, self).__init__(*args, **kwargs)
-        self.extra_price_fields = []  # list of tuples (label, value)
-        # These must not be stored, since their components can be changed
-        # between sessions / logins etc...
-        self.line_subtotal = Decimal('0.0')
-        self.line_total = Decimal('0.0')
-        self.current_total = Decimal('0.0')  # Used by cart modifiers
-
-    def update(self, state):
-        self.extra_price_fields = []  # Reset the price fields
-        self.line_subtotal = self.product.get_price() * self.quantity
-        self.current_total = self.line_subtotal
-
-        for modifier in cart_modifiers_pool.get_modifiers_list():
-            # We now loop over every registered price modifier,
-            # most of them will simply add a field to extra_payment_fields
-            modifier.process_cart_item(self, state)
-
-        self.line_total = self.current_total
-        return self.line_total
