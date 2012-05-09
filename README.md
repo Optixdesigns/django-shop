@@ -1,4 +1,4 @@
-### Django shop but Optixdesigns.
+### Django shop by Optixdesigns.
 
 ## Installation
 
