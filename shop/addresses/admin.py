@@ -1,5 +1,5 @@
 from django.contrib import admin
-from shop.orders.models import Order
+from shop.addresses.models import Address
 
-admin.site.register(Order)
+admin.site.register(Address)
 
