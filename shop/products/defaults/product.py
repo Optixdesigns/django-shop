@@ -10,3 +10,4 @@ class Product(BaseProduct, Featurable, RichText):
 		app_label = 'products'
 		verbose_name = _('Product')
 		verbose_name_plural = _('Products')
+		db_table = 'shop_products_product'
