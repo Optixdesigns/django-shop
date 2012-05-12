@@ -4,20 +4,26 @@ from django.utils.translation import ugettext_lazy as _
 from hub.node.models import Node
 from shop.utils.fields import CurrencyField
 from polymorphic.polymorphic_model import PolymorphicModel
+from autoslug import AutoSlugField
 from shop.products.managers import (
     ProductManager,
     ProductStatisticsManager,
 )
+from datetime import *
 
 #==============================================================================
 # Product
 #==============================================================================
-class BaseProduct(Node):
+class BaseProduct(models.Model):
     """
     A basic product for the shop
     Most of the already existing fields here should be generic enough to reside
     on the "base model" and not on an added property
     """
+    title      = models.CharField(max_length=255)
+    slug       = AutoSlugField(populate_from='title', max_length=255, editable=True, blank=True, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, default=datetime.now())
+    updated_at = models.DateTimeField(auto_now=True)
     price = CurrencyField(verbose_name=_('Unit price'))
     sku = models.CharField(max_length=255)
 
@@ -46,4 +52,4 @@ class BaseProduct(Node):
         """
         Return the title of this Product (provided for extensibility)
         """
-        return self.title       
+        return self.title

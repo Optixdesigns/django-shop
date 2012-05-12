@@ -18,4 +18,4 @@ class CartItem(BaseCartItem):
         app_label = 'cart'
         verbose_name = _('Cart item')
         verbose_name_plural = _('Cart items')
-        db_table = 'shop_cart_cart_item'       
+        db_table = 'shop_cart_cartitem'       

@@ -3,5 +3,6 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
     (r'^products/', include('shop.products.urls')),
+    (r'^catalog/', include('shop.contrib.catalog.urls')),
     (r'^cart/', include('shop.cart.urls')),
 )

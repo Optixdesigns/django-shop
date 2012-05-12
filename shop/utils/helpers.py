@@ -6,6 +6,7 @@ from django.utils.importlib import import_module
 def get_model_string(model_name):
     setting_name = 'SHOP_%s_MODEL' % model_name.upper().replace('_', '')
     class_path = getattr(settings, setting_name, None)
+    #print class_path
         
     if not class_path:
         return model_name
@@ -22,5 +23,6 @@ def get_model_string(model_name):
             model_name = class_path.split('.')[-1]
         except:
             raise exceptions.ImproperlyConfigured(CLASS_PATH_ERROR % (setting_name, setting_name))
-
+    
+    #print "%s.%s" % (app_label, model_name)
     return "%s.%s" % (app_label, model_name)

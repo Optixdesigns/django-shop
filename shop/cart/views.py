@@ -10,7 +10,7 @@ class CartView(ListView):
   template_name = "shop/cart.haml"
 
   def get_queryset(self):
-    return self.request.cart.items.all()
+    return self.request.shop.cart.items.all()
 
   def post(self, request, *args, **kwargs):
     form = CartItemForm(request.POST)
