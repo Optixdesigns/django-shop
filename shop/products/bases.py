@@ -14,7 +14,7 @@ from datetime import *
 #==============================================================================
 # Product
 #==============================================================================
-class BaseProduct(models.Model):
+class BaseProduct(PolymorphicModel):
     """
     A basic product for the shop
     Most of the already existing fields here should be generic enough to reside

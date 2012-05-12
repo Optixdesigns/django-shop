@@ -3,9 +3,9 @@ from shop.products.models import Product
 from django.views.generic import (TemplateView, ListView, DetailView, View)
 from django.views.generic.base import TemplateResponseMixin
 
-class ProductDetailView(DetailView):
+class ProductView(DetailView):
     model = Product
-    template_name = "shop/product_detail.haml"
+    template_name = "shop/product.haml"
 
 class ProductListView(ListView):
     model = Product

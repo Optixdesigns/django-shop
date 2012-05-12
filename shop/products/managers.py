@@ -7,7 +7,7 @@ from polymorphic.manager import PolymorphicManager
 #==============================================================================
 # Product
 #==============================================================================
-class ProductStatisticsManager(models.Manager):
+class ProductStatisticsManager(PolymorphicManager):
     """
     A Manager for all the non-object manipulation needs, mostly statistics and
     other "data-mining" toys.
@@ -17,5 +17,5 @@ class ProductStatisticsManager(models.Manager):
         pass
 
 
-class ProductManager(models.Manager):
+class ProductManager(PolymorphicManager):
     pass
