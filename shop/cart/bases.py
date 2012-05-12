@@ -32,7 +32,7 @@ class BaseCart(models.Model):
 
     objects = CartManager()
 
-    def add(self, product, quantity=1):
+    def add_product(self, product, quantity=1):
       """
       Add or update a cart item
       """
@@ -42,10 +42,10 @@ class BaseCart(models.Model):
       )
 
       if not created:
-          item.quantity += quantity
-          item.save()
+        item.quantity += quantity
+        item.save()
 
-      self.save()
+      self.save() # save to dates
       return item
 
     def update(self):
@@ -90,7 +90,7 @@ class BaseCartItem(models.Model):
       self.line_subtotal = Decimal('0.0')
       self.line_total = Decimal('0.0')
 
-      self.update()
+      #self.update()
       #self.current_total = Decimal('0.0')  # Used by cart modifiers
 
     def update(self):

@@ -1,15 +1,21 @@
 from shop.products.models import Product
+from shop.cart.bases import BaseCartItem
 from django import forms
+from django.forms.widgets import HiddenInput
 
-class CartItemForm(forms.Form):
-  product_id = forms.IntegerField(min_value=1)
-  quantity = forms.IntegerField(min_value=1, initial=1, required=False)
+class CartItemBaseForm(forms.Form):
+  product_id = forms.CharField(widget=HiddenInput(), required=True)
+  quantity = forms.IntegerField(min_value=1, initial=1, required=True)
+
+  #class Meta:
+    #model = BaseCartItem
 
   def clean_quantity(self):
     quantity = self.cleaned_data['quantity']
     return quantity if quantity is not None else 1
 
   def clean(self):
+    #print "clean"
     product_id = self.cleaned_data.get('product_id')
     if product_id:
       try:
@@ -22,4 +28,4 @@ class CartItemForm(forms.Form):
     return self.cleaned_data
 
   def add_to_cart(self, cart):
-    return cart.add(self.cleaned_data['product'], self.cleaned_data['quantity'])
+    return cart.add_product(self.cleaned_data['product'], self.cleaned_data['quantity'])
