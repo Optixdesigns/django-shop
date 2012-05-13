@@ -32,3 +32,10 @@ class OptionBase(PolymorphicModel):
 
     def __unicode__(self):
         return self.name
+
+'''
+class ProductAttribute(models.Model):
+    attribute = models.ForeignKey(Attribute)
+    product = models.ForeignKey(Product)
+    #price = models.CharField(max_length=128)
+'''  
