@@ -4,6 +4,10 @@ from hub.node.models import Node
 from shop.products.models import Product
 from hub.core.admin import DisplayableAdmin
 from django.conf import settings
+from shop.attributes.models import Attribute, Option
+
+class AttributeInline(admin.TabularInline):
+    model = Attribute
 
 class ProductBaseAdmin(admin.ModelAdmin):
 	pass

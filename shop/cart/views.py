@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, get_object_or_404
 from shop.cart.forms import CartItemBaseForm
 from django.forms.formsets import formset_factory
+from django.forms.models import modelformset_factory 
 
 
 class CartView(ListView):
