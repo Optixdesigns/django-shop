@@ -1,11 +1,11 @@
 from shop.products.models import Product
 from shop.cart.bases import BaseCartItem
 from django import forms
-from django.forms.widgets import HiddenInput
+#from django.forms import widgets
 
 class CartItemBaseForm(forms.Form):
-  product_id = forms.CharField(widget=HiddenInput(), required=True)
-  quantity = forms.IntegerField(min_value=1, initial=1, required=True)
+  product_id = forms.CharField(widget=forms.widgets.HiddenInput(), required=True)
+  quantity = forms.IntegerField(min_value=1, initial=1, required=True, widget=forms.widgets.Select(choices=((1, '1'), (2, '2'), (3, '3'),)))
 
   #class Meta:
     #model = BaseCartItem

@@ -40,8 +40,14 @@ class CartView(ListView):
       form = CartItemBaseForm(request.POST)
       if form.is_valid():
         form.add_to_cart(request.shop.cart)    
-
-    return redirect(self.redirect)  
+    
+    #if self.request.is_ajax():
+          
+    #self.render_to_response(*args, **kwargs)
+    #super(CartView, self).post(request, *args, **kwargs)
+    return self.get(request, *args, **kwargs)
+    #return self.get(request, *args, **kwargs)
+    #return redirect(self.redirect)  
 
   def get_context_data(self, **kwargs):
     CartItemFormSet = formset_factory(CartItemBaseForm)
