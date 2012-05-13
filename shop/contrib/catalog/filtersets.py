@@ -5,7 +5,7 @@ from django import forms
 
 class ProductFilterSet(django_filters.FilterSet):
     #price = django_filters.RangeFilter(widget=django_filters.widgets.RangeWidget())
-    title = django_filters.CharFilter(label="Search")
+    title = django_filters.CharFilter(label="Search", lookup_type='contains')
     categories = django_filters.ModelMultipleChoiceFilter(queryset=Category.objects.all(), widget=forms.widgets.Select())
 
     class Meta:
