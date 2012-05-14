@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from hub.node.models import Node
 from shop.utils.fields import CurrencyField
 from polymorphic.polymorphic_model import PolymorphicModel
+from polymorphic.manager import PolymorphicManager
 from autoslug import AutoSlugField
 from shop.products.managers import (
     ProductManager,
@@ -53,3 +54,12 @@ class BaseProduct(PolymorphicModel):
         Return the title of this Product (provided for extensibility)
         """
         return self.title
+
+class VariantBase(PolymorphicModel):
+    """
+    Base class for variants. It identifies a concrete product instance,
+    which goes to a cart. Custom variants inherit from it.
+    """
+    objects = PolymorphicManager()
+    class Meta:
+        abstract = True
