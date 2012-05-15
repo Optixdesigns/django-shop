@@ -99,7 +99,7 @@ class BaseCartItem(models.Model):
     """
     cart = models.ForeignKey(get_model_string('Cart'), related_name="items")
     quantity = models.IntegerField()
-    product = models.ForeignKey(get_model_string('Product'))
+    #product = models.ForeignKey(get_model_string('Product'))
     variant = models.ForeignKey(get_model_string('Variant'))
 
     def __init__(self, *args, **kwargs):

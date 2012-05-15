@@ -46,7 +46,7 @@ class CartView(ListView):
   def get_context_data(self, **kwargs):
     CartItemFormSet = formset_factory(CartItemBaseForm)
     context = {
-      'cartitems_formset': CartItemFormSet(initial={'variant_id': 1})
+      'cartitems_formset': CartItemFormSet()
     }    
 
     context.update(kwargs)
