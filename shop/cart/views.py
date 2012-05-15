@@ -39,14 +39,14 @@ class CartView(ListView):
     else:
       form = CartItemBaseForm(request.POST)
       if form.is_valid():
-        form.add_to_cart(request.shop.cart)    
+        form.add_to_cart(request.shop.cart)   
     
     return self.get(request, *args, **kwargs)
 
   def get_context_data(self, **kwargs):
     CartItemFormSet = formset_factory(CartItemBaseForm)
     context = {
-      'cartitems_formset': CartItemFormSet()
+      'cartitems_formset': CartItemFormSet(initial={'variant_id': 1})
     }    
 
     context.update(kwargs)

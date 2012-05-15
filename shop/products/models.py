@@ -12,3 +12,6 @@ from djutils.utils.helpers import load_class
 #==============================================================================
 PRODUCT_MODEL = getattr(settings, 'SHOP_PRODUCT_MODEL', 'shop.products.defaults.product.Product')
 Product = load_class(PRODUCT_MODEL)
+
+VARIANT_MODEL = getattr(settings, 'SHOP_VARIANT_MODEL', 'shop.products.defaults.product.Variant')
+Variant = load_class(VARIANT_MODEL)

@@ -32,6 +32,22 @@ class BaseCart(models.Model):
 
     objects = CartManager()
 
+    def add_item(self, variant, quantity=1):
+      """
+      Add or update a cart item
+      """
+      item, created = self.items.get_or_create(
+          variant = variant,
+          defaults = {'quantity': quantity,},
+      )
+
+      if not created:
+        item.quantity += quantity
+        item.save()
+
+      self.save() # save to dates
+      return item
+
     def add_product(self, product, quantity=1):
       """
       Add or update a cart item
@@ -84,6 +100,7 @@ class BaseCartItem(models.Model):
     cart = models.ForeignKey(get_model_string('Cart'), related_name="items")
     quantity = models.IntegerField()
     product = models.ForeignKey(get_model_string('Product'))
+    variant = models.ForeignKey(get_model_string('Variant'))
 
     def __init__(self, *args, **kwargs):
       super(BaseCartItem, self).__init__(*args, **kwargs)
