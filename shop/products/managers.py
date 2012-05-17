@@ -12,10 +12,8 @@ class ProductStatisticsManager(PolymorphicManager):
     A Manager for all the non-object manipulation needs, mostly statistics and
     other "data-mining" toys.
     """
-
     def top_selling_products(self, quantity):
         pass
-
 
 class ProductManager(PolymorphicManager):
     pass

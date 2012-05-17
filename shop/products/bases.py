@@ -11,11 +11,12 @@ from shop.products.managers import (
     ProductStatisticsManager,
 )
 from datetime import *
+from ..utils.models import Subtyped
 
 #==============================================================================
 # Product
 #==============================================================================
-class BaseProduct(PolymorphicModel):
+class BaseProduct(Subtyped):
     """
     A basic product for the shop
     Most of the already existing fields here should be generic enough to reside
@@ -26,10 +27,9 @@ class BaseProduct(PolymorphicModel):
     created_at = models.DateTimeField(auto_now_add=True, default=datetime.now())
     updated_at = models.DateTimeField(auto_now=True)
     price = CurrencyField(verbose_name=_('Unit price'))
-    sku = models.CharField(max_length=255)
 
-    objects = ProductManager()
-    statistics = ProductStatisticsManager()
+    #objects = ProductManager()
+    #statistics = ProductStatisticsManager()
 
     class Meta(object):
         abstract = True
@@ -42,24 +42,35 @@ class BaseProduct(PolymorphicModel):
 
     def get_absolute_url(self):
         return reverse('product_detail', args=[self.slug])
-
+        
     def get_price(self):
-        """
-        Return the price for this item (provided for extensibility)
-        """
-        return self.price
+      """
+      Return the price for this item (provided for extensibility)
+      """
+      return self.price
 
     def get_title(self):
-        """
-        Return the title of this Product (provided for extensibility)
-        """
-        return self.title
+      """
+      Return the title of this Product (provided for extensibility)
+      """
+      return self.title
 
-class VariantBase(PolymorphicModel):
+class VariantBase(Subtyped):
     """
     Base class for variants. It identifies a concrete product instance,
     which goes to a cart. Custom variants inherit from it.
     """
-    objects = PolymorphicManager()
+    #objects = PolymorphicManager()
+    #objects = PolymorphicManager()
+
+    def form_fields(self):
+      return [] 
+
+    def get_title(self):
+      """
+      Return the title of this Product (provided for extensibility)
+      """
+      return self.title
+      
     class Meta:
         abstract = True

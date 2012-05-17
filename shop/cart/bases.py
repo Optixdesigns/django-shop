@@ -48,22 +48,6 @@ class BaseCart(models.Model):
       self.save() # save to dates
       return item
 
-    def add_product(self, product, quantity=1):
-      """
-      Add or update a cart item
-      """
-      item, created = self.items.get_or_create(
-          product = product,
-          defaults = {'quantity': quantity,},
-      )
-
-      if not created:
-        item.quantity += quantity
-        item.save()
-
-      self.save() # save to dates
-      return item
-
     def update(self):
       '''
       Update cart

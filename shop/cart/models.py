@@ -12,3 +12,6 @@ from djutils.utils.helpers import load_class
 #==============================================================================
 SHOP_CART_MODEL = getattr(settings, 'SHOP_CART_MODEL', 'shop.cart.defaults.models.Cart')
 Cart = load_class(SHOP_CART_MODEL)
+
+SHOP_CARTITEM_MODEL = getattr(settings, 'SHOP_CARTITEM_MODEL', 'shop.cart.defaults.models.CartItem')
+CartItem = load_class(SHOP_CARTITEM_MODEL)
