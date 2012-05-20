@@ -5,25 +5,27 @@ from django.views.generic import (TemplateView, ListView, DetailView, View)
 from django.views.generic.base import TemplateResponseMixin
 from shop.cart.forms import EditCartItemForm, AddToCartForm
 from django.forms.formsets import formset_factory
+from django.shortcuts import get_object_or_404, render_to_response, redirect
+from django.template import RequestContext
+from django.contrib import messages
+from django.core.urlresolvers import reverse
 
-class ProductView(DetailView):
-  model = Product
-  template_name = "shop/product.haml"
+def ProductView(request, slug):
+  product = get_object_or_404(Product.objects.all(), slug=slug)
 
-  def get_context_data(self, **kwargs):
-    product = kwargs['object']
-    #print product
-    #variant = kwargs['object'].variant_set.all()[0]
-    #variant = Variant.objects.filter(product_id=kwargs['object'].id)[0]
-    #if product.variants.exists():
-      #variant = product.variants.get()
-    context = {
-      'add_to_cart_form': AddToCartForm(data=None, product=product)
-    }    
+  if request.POST:
+    data = request.POST.copy()
+    form = AddToCartForm(data=data, product=product)
 
-    context.update(kwargs)
-    
-    return super(ProductView, self).get_context_data(**context)
+    if form.is_valid():
+      form.add_to_cart(request.shop.cart)
+      messages.success(request, 'Product has been added to your cart.')
+      return redirect('shop_cart') # send to cart after adding a product
+
+  else:
+    form = AddToCartForm(product=product)
+
+  return render_to_response('shop/product.haml', {'object': product, 'add_to_cart_form': form}, context_instance=RequestContext(request))
 
 class ProductListView(ListView):
     model = Product

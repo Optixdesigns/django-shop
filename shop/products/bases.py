@@ -42,7 +42,7 @@ class BaseProduct(Subtyped):
 
     def get_absolute_url(self):
         return reverse('product_detail', args=[self.slug])
-        
+
     def get_price(self):
       """
       Return the price for this item (provided for extensibility)

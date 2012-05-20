@@ -3,28 +3,42 @@ from shop.cart.models import CartItem
 from shop.cart.bases import BaseCartItem
 from shop.products.forms import ProductForm
 from django import forms
-#from django.forms import widgets
+
+choices = {}
+for x in range(30):
+  choices[x] = x
+
+QUANTITY_CHOICES = tuple(choices.items())
 
 class CartItemBaseForm(forms.Form):
   product_id = forms.CharField(widget=forms.widgets.HiddenInput(), required=True)
-  quantity = forms.IntegerField(min_value=1, initial=1, required=True, widget=forms.widgets.Select(choices=((1, '1'), (2, '2'), (3, '3'),)))
-  variant_fields = []
+  quantity = forms.IntegerField(min_value=1, initial=1, required=True, widget=forms.widgets.Select(choices=QUANTITY_CHOICES))
+  variant_field_names = []
+  
   variant = None
+  product = None
 
   def __init__(self, data=None, *args, **kwargs):
     self.product = kwargs.pop('product')
+
+    if 'initial' in kwargs:
+      self.variant = kwargs['initial'].get('variant')
+
     super(CartItemBaseForm, self).__init__(data=data, *args, **kwargs)
     self.fields['product_id'].initial = self.product.id
     
     # Get variant fields
     for variant in self.product.variants.all():
-      self.variant_fields = variant.form_fields() 
-      if len(self.variant_fields ) != 0:
-        fields = forms.models.fields_for_model(variant, fields=self.variant_fields)
+      self.variant_field_names = variant.form_fields() 
+      if len(self.variant_field_names ) != 0:
+        fields = forms.models.fields_for_model(variant, fields=self.variant_field_names)
         for name, field in fields.iteritems():
           self.fields[name] = field
 
-    # Set defaults      
+    # Get defaults for variant fields      
+    if self.variant:
+      for name in self.variant_field_names:
+        self.fields[name].initial = getattr(self.variant, name)
 
   def clean_quantity(self):
     quantity = self.cleaned_data['quantity']
@@ -33,7 +47,7 @@ class CartItemBaseForm(forms.Form):
   def clean(self):
     filter_set = {}
 
-    for name in self.variant_fields:
+    for name in self.variant_field_names:
       filter_set[name] = self.cleaned_data.get(name)
     
     qs = self.product.variants.filter(**filter_set)
@@ -61,6 +75,6 @@ class EditCartItemForm(CartItemBaseForm):
     #print kwargs['initial']['product_id']
     #initial = kwargs['initial']
     product_id = 1
-    #print product_id
     product = Product.objects.get(id=product_id)
+
     super(EditCartItemForm, self).__init__(data=data, product=product, *args, **kwargs)
