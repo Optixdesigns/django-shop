@@ -34,32 +34,33 @@ def AddToCartView(request):
     if form.is_valid():
       form.add_to_cart(request.shop.cart)
     else:
-      succes = False  
-
-  if self.request.is_ajax():
+      success = False  
+  
+  if request.is_ajax():
     return HttpResponse(simplejson.dumps({"success": success}), mimetype='application/javascript')
-
-  redirect('cart/')
-  pass
+  
+  return redirect('shop_cart')
 
 def CartView(request):
   template = "shop/cart.haml"
   EditCartItemFormSet = formset_factory(EditCartItemForm, extra=0, can_delete=True)
-  #print request.POST
+
   if request.POST:
     formset = EditCartItemFormSet(request.POST)
 
     if formset.is_valid():
       for form in formset:
-        form.add_to_cart(request.shop.cart)
-
+        request.shop.cart.update_item(form.cleaned_data['variant'], form.cleaned_data['quantity'], form.variant)
+        #form.add_to_cart(request.shop.cart)
   else:
     initial = []
     for item in request.shop.cart.items.all():
       variant = item.variant.get_subtype_instance()
       initial.append({
-        'product': variant.product, 
-        'variant': variant, 
+        'product': variant.product,
+        'variant': variant,
+        'variant_id': variant.id,
+        'product_id': variant.product.id,
         'quantity': item.quantity,
       })
 
@@ -68,7 +69,7 @@ def CartView(request):
   if request.is_ajax():
     template = "shop/cart_ajax.haml"
 
-  return render_to_response(template, {'formset': formset}, context_instance=RequestContext(request))      
+  return render_to_response(template, {'formset': formset}, context_instance=RequestContext(request))    
 
 '''
 class CartView(TemplateView, RedirectView):

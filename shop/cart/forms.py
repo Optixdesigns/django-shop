@@ -12,20 +12,30 @@ QUANTITY_CHOICES = tuple(choices.items())
 
 class CartItemBaseForm(forms.Form):
   product_id = forms.CharField(widget=forms.widgets.HiddenInput(), required=True)
+  variant_id = forms.CharField(widget=forms.widgets.HiddenInput(), required=False)
   quantity = forms.IntegerField(min_value=1, initial=1, required=True, widget=forms.widgets.Select(choices=QUANTITY_CHOICES))
-  variant_field_names = []
   
   variant = None
   product = None
+  variant_field_names = []
 
   def __init__(self, data=None, *args, **kwargs):
-    self.product = kwargs.pop('product')
-
-    if 'initial' in kwargs:
+    if 'initial' in kwargs and 'variant' in kwargs['initial']:
       self.variant = kwargs['initial'].get('variant')
+      self.product = self.variant.product
+      kwargs['initial']['variant_id'] = self.variant.id
+      kwargs['initial']['product_id'] = self.variant.product.id
+    else:
+      if 'product' in kwargs:
+        self.product = kwargs.pop('product')
+        #self.product = kwargs.pop('product')
 
     super(CartItemBaseForm, self).__init__(data=data, *args, **kwargs)
+
+    # Initial field values
     self.fields['product_id'].initial = self.product.id
+    #if self.variant:
+      #self.fields['variant_id'].initial = self.variant.id
     
     # Get variant fields
     for variant in self.product.variants.all():
@@ -60,9 +70,6 @@ class CartItemBaseForm(forms.Form):
   def add_to_cart(self, cart): # make to save
     return cart.add_item(self.cleaned_data['variant'], self.cleaned_data['quantity'])
 
-  def remove_from_cart(self, cart): # make to save
-    pass
-
 class AddToCartForm(CartItemBaseForm):
   pass
 
@@ -74,7 +81,10 @@ class EditCartItemForm(CartItemBaseForm):
     #print kwargs
     #print kwargs['initial']['product_id']
     #initial = kwargs['initial']
-    product_id = 1
-    product = Product.objects.get(id=product_id)
+    #product_id = 1
+    #product = Product.objects.get(id=product_id)
+    #product = None
+    #if 'initial' in kwargs and 'product_id' in kwargs['initial']:
+      #product = Product.objects.get(id=kwargs['initial'].get('product_id'))
 
-    super(EditCartItemForm, self).__init__(data=data, product=product, *args, **kwargs)
+    super(EditCartItemForm, self).__init__(data=data, *args, **kwargs)

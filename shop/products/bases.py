@@ -70,7 +70,7 @@ class VariantBase(Subtyped):
       """
       Return the title of this Product (provided for extensibility)
       """
-      return self.title
+      return self.product.title
       
     class Meta:
         abstract = True

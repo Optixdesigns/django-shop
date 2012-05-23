@@ -45,7 +45,23 @@ class BaseCart(models.Model):
         item.quantity += quantity
         item.save()
 
-      self.save() # save to dates
+      self.save() # Save to update cart item dates
+      return item
+
+    def update_item(self, variant, quantity=1):
+      """
+      Add or update a cart item
+      """
+      item, created = self.items.get_or_create(
+          variant = variant,
+          defaults = {'quantity': quantity,},
+      )
+
+      if not created:
+        item.quantity += quantity
+        item.save()
+
+      self.save() # Save to update cart item dates
       return item
 
     def update(self):
