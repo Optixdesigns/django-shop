@@ -1,7 +1,6 @@
 from shop.products.models import Product, Variant
 from shop.cart.models import CartItem
 from shop.cart.bases import BaseCartItem
-from shop.products.forms import ProductForm
 from django import forms
 
 choices = {}
@@ -39,7 +38,8 @@ class CartItemBaseForm(forms.Form):
     
     # Get variant fields
     for variant in self.product.variants.all():
-      self.variant_field_names = variant.form_fields() 
+      variant =  variant.get_subtype_instance()
+      self.variant_field_names = variant.form_fields()
       if len(self.variant_field_names ) != 0:
         fields = forms.models.fields_for_model(variant, fields=self.variant_field_names)
         for name, field in fields.iteritems():
