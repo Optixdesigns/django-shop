@@ -8,7 +8,7 @@ class CatalogForm(forms.Form):
   q = forms.CharField(label="search", required=False)
 
   model = Product
-  qs = None
+  qs = Product.objects.all()
 
   def __init__(self, data=None, *args, **kwargs):
   	if 'qs' in kwargs:
@@ -20,12 +20,12 @@ class CatalogForm(forms.Form):
 
   def results(self):
     qs = self.qs
-
+    
     if hasattr(self, 'cleaned_data'):
       data = self.cleaned_data
 
       # Search string
-      if data.get('q'):
-        qs = qs.filter(title=data.get('q'))
+      if self.cleaned_data['q']:
+        qs = qs.filter(title__icontains=self.cleaned_data['q'])
 
-  	return qs
+    return qs
