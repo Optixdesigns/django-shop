@@ -8,8 +8,8 @@ from django.template import RequestContext
 def CatalogView(request):
   form = CatalogForm()
 
-  if request.POST:
-    data = request.POST.copy()
+  if request.REQUEST:
+    data = request.REQUEST.copy()
     form = CatalogForm(data=data)
 
     #if form.is_valid():

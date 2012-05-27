@@ -5,6 +5,8 @@ from shop.cart.bases import BaseCartItem
 from django import forms
 
 class CatalogForm(forms.Form):
+  q = forms.CharField(label="search")
+
   model = Product
   qs = None
 
@@ -17,4 +19,13 @@ class CatalogForm(forms.Form):
   	super(CatalogForm, self).__init__(data=data, *args, **kwargs)
 
   def results(self):
-  	return self.qs
+    qs = self.qs
+
+    if hasattr(self, 'cleaned_data'):
+      data = self.cleaned_data
+
+      # Search string
+      if data.get('q'):
+        qs = qs.filter(title=data.get('q'))
+
+  	return qs

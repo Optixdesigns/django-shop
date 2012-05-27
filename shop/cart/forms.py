@@ -40,7 +40,6 @@ class CartItemBaseForm(forms.Form):
     #print self.product.variants
     #print self.product.get_subtype_instance.title
     product = self.product.get_subtype_instance()
-    print product
     for variant in product.variants.all():
       variant =  variant.get_subtype_instance()
       self.variant_field_names = variant.form_fields()
