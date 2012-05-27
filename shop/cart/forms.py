@@ -37,7 +37,11 @@ class CartItemBaseForm(forms.Form):
       #self.fields['variant_id'].initial = self.variant.id
     
     # Get variant fields
-    for variant in self.product.variants.all():
+    #print self.product.variants
+    #print self.product.get_subtype_instance.title
+    product = self.product.get_subtype_instance()
+    print product
+    for variant in product.variants.all():
       variant =  variant.get_subtype_instance()
       self.variant_field_names = variant.form_fields()
       if len(self.variant_field_names ) != 0:
@@ -59,8 +63,9 @@ class CartItemBaseForm(forms.Form):
 
     for name in self.variant_field_names:
       filter_set[name] = self.cleaned_data.get(name)
-    
-    qs = self.product.variants.filter(**filter_set)
+      
+    product = self.product.get_subtype_instance()
+    qs = product.variants.filter(**filter_set)
     if not qs.exists():
       raise forms.ValidationError("Variant does not exist")
 
