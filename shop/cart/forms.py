@@ -19,6 +19,7 @@ class CartItemBaseForm(forms.Form):
   variant_field_names = []
 
   def __init__(self, data=None, *args, **kwargs):
+    # we should make this better....
     if 'initial' in kwargs and 'variant' in kwargs['initial']:
       self.variant = kwargs['initial'].get('variant')
       self.product = self.variant.product
@@ -27,18 +28,15 @@ class CartItemBaseForm(forms.Form):
     else:
       if 'product' in kwargs:
         self.product = kwargs.pop('product')
-        #self.product = kwargs.pop('product')
+
+    if self.product is None and 'product_id' in data:
+      self.product = Product.objects.get(id=data['product_id'])   
 
     super(CartItemBaseForm, self).__init__(data=data, *args, **kwargs)
 
     # Initial field values
     self.fields['product_id'].initial = self.product.id
-    #if self.variant:
-      #self.fields['variant_id'].initial = self.variant.id
-    
-    # Get variant fields
-    #print self.product.variants
-    #print self.product.get_subtype_instance.title
+
     product = self.product.get_subtype_instance()
     for variant in product.variants.all():
       variant =  variant.get_subtype_instance()
