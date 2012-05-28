@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from shop.products.models import Product, Variant
+from shop.product.models import Product, Variant
 from django.views.generic import (TemplateView, ListView, DetailView, View)
 from django.views.generic.base import TemplateResponseMixin
 from shop.cart.forms import EditCartItemForm, AddToCartForm

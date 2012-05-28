@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-This overrides the Product model with the class loaded from the
-SHOP_PRODUCT_MODEL setting if it exists.
-"""
+
 from django.conf import settings
 from django.db import models
 from djutils.utils.helpers import load_class
 
 #==============================================================================
-# Get the project model
+# Get the category model
 #==============================================================================
-ORDER_MODEL = getattr(settings, 'SHOP_ORDER_MODEL', 'shop.orders.defaults.models.Order')
-Order = load_class(ORDER_MODEL)
+SHOP_CATEGORY_MODEL = getattr(settings, 'SHOP_CATEGORY_MODEL', 'shop.category.defaults.category.Category')
+Category = load_class(SHOP_CATEGORY_MODEL)

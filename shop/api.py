@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from shop.cart.models import Cart
-from shop.categories.models import Category
+from shop.category.models import Category
 
 class ShopApi(object):
 	def __init__(self, request, *args, **kwargs):

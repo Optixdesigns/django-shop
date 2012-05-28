@@ -1,4 +1,4 @@
-from shop.products.models import Product, Variant
+from shop.product.models import Product, Variant
 from shop.cart.models import CartItem
 from shop.cart.bases import BaseCartItem
 from django import forms

@@ -6,7 +6,7 @@ from django.shortcuts import redirect, get_object_or_404
 from shop.cart.forms import EditCartItemForm, AddToCartForm
 from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory 
-from shop.products.models import Product, Variant
+from shop.product.models import Product, Variant
 from django.utils import simplejson
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext

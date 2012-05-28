@@ -1,7 +1,7 @@
 from django.contrib import admin
-from hub.categories.bases import CategoryBase
-from hub.categories.models import Category
-from hub.categories.utils import *
+from shop.category.bases import CategoryBase
+#from hub.categories.models import Category
+#from hub.categories.utils import *
 from django import forms
 from django.conf import settings
 

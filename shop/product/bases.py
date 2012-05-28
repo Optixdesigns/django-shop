@@ -6,7 +6,7 @@ from shop.utils.fields import CurrencyField
 from polymorphic.polymorphic_model import PolymorphicModel
 from polymorphic.manager import PolymorphicManager
 from autoslug import AutoSlugField
-from shop.products.managers import (
+from shop.product.managers import (
     ProductManager,
     ProductStatisticsManager,
 )

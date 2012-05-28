@@ -1,5 +1,5 @@
-from shop.products.models import Product, Variant
-from shop.categories.models import Category
+from shop.product.models import Product, Variant
+from shop.category.models import Category
 from shop.cart.models import CartItem
 from shop.cart.bases import BaseCartItem
 from django import forms
