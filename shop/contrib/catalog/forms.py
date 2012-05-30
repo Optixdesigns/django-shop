@@ -5,7 +5,7 @@ from shop.cart.bases import BaseCartItem
 from django import forms
 
 class CatalogForm(forms.Form):
-  q = forms.CharField(label="search", required=False)
+  q = forms.CharField(label="search", required=False, widget=forms.TextInput(attrs={'placeholder': 'Search term..'}))
 
   model = Product
   qs = Product.objects.all()
