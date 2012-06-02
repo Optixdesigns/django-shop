@@ -54,6 +54,7 @@ class CartItemBaseForm(forms.Form):
     # Get product and variant
     product = self.product.get_subtype_instance()
     variant = product.variants.all()[0].get_subtype_instance()
+    self.variant_field_names = variant.form_fields()
 
     # Get our form fields and fill in values
     existing_choices = _get_existing_variants_choices(product.variants.all(), variant.form_fields())
