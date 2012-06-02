@@ -65,7 +65,7 @@ def CartView(request):
           request.shop.cart.update_item(form.cleaned_data['variant'], form.variant, form.cleaned_data['quantity'])
 
       # Reload formset    
-      formset = EditCartItemFormSet(initial=initial)    
+      #formset = EditCartItemFormSet(initial=initial)    
   else:
     formset = EditCartItemFormSet(initial=initial)
 
