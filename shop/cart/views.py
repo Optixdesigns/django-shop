@@ -28,8 +28,7 @@ def AddToCartView(request):
     else:
       success = False     
   else:
-    product = Product.objects.get(id=data['product_id'])
-    form = AddToCartForm(data=data, product=product)
+    form = AddToCartForm(data=data, initial={'product_id': data['product_id']})
 
     if form.is_valid():
       form.add_to_cart(request.shop.cart)
@@ -46,31 +45,34 @@ def CartView(request):
   template = "shop/cart.haml"
   EditCartItemFormSet = formset_factory(EditCartItemForm, extra=0, can_delete=True)
 
+  initial = []
+  for item in request.shop.cart.items.all():
+    variant = item.variant.get_subtype_instance()
+    initial.append({
+      'variant_id': variant.id,
+      'product_id': variant.product.id,
+      'quantity': item.quantity,
+    })
+
   if request.POST:
-    formset = EditCartItemFormSet(request.POST)
+    formset = EditCartItemFormSet(request.POST, initial=initial)
 
     if formset.is_valid():
       for form in formset:
-        request.shop.cart.update_item(form.cleaned_data['variant'], form.cleaned_data['quantity'], form.variant)
-        #form.add_to_cart(request.shop.cart)
-  else:
-    initial = []
-    for item in request.shop.cart.items.all():
-      variant = item.variant.get_subtype_instance()
-      initial.append({
-        'product': variant.product,
-        'variant': variant,
-        'variant_id': variant.id,
-        'product_id': variant.product.id,
-        'quantity': item.quantity,
-      })
+        if form.cleaned_data['DELETE']:
+          request.shop.cart.delete_item(form.variant)
+        else:  
+          request.shop.cart.update_item(form.cleaned_data['variant'], form.variant, form.cleaned_data['quantity'])
 
+      # Reload formset    
+      formset = EditCartItemFormSet(initial=initial)    
+  else:
     formset = EditCartItemFormSet(initial=initial)
 
   if request.is_ajax():
     template = "shop/cart_ajax.haml"
 
-  return render_to_response(template, {'formset': formset}, context_instance=RequestContext(request))    
+  return render_to_response(template, {'formset': formset}, context_instance=RequestContext(request))
 
 '''
 class CartView(TemplateView, RedirectView):

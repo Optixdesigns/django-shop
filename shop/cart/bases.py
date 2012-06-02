@@ -48,21 +48,31 @@ class BaseCart(models.Model):
       self.save() # Save to update cart item dates
       return item
 
-    def update_item(self, variant, quantity=1):
+    def update_item(self, variant, variant_old, quantity=1):
       """
       Add or update a cart item
       """
+      if variant.id != variant_old.id:
+        self.delete_item(variant_old)
+
       item, created = self.items.get_or_create(
           variant = variant,
-          defaults = {'quantity': quantity,},
       )
 
-      if not created:
-        item.quantity += quantity
-        item.save()
+
+      #if not created:
+      item.quantity = quantity
+      item.save()
 
       self.save() # Save to update cart item dates
       return item
+
+    def delete_item(self, variant):
+      """
+      Add or update a cart item
+      """
+      variant.delete()
+      self.save() # Save to update cart item dates
 
     def update(self):
       '''

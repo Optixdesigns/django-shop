@@ -14,7 +14,7 @@ def ProductView(request, slug):
 
   if request.POST:
     data = request.POST.copy()
-    form = AddToCartForm(data=data, product=product)
+    form = AddToCartForm(data=data, initial={'product_id': product.id})
 
     if form.is_valid():
       form.add_to_cart(request.shop.cart)
@@ -22,7 +22,7 @@ def ProductView(request, slug):
       return redirect('shop_cart') # send to cart after adding a product
 
   else:
-    form = AddToCartForm(product=product)
+    form = AddToCartForm(initial={'product_id': product.id})
 
   return render_to_response('shop/product.haml', {'object': product, 'add_to_cart_form': form}, context_instance=RequestContext(request))
 

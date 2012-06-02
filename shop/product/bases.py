@@ -70,7 +70,7 @@ class VariantBase(Subtyped):
       """
       Return the title of this Product (provided for extensibility)
       """
-      return self.product.title
+      return self.get_subtype_instance().product.title
       
     class Meta:
         abstract = True

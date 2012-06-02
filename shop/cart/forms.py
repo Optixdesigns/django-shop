@@ -33,56 +33,68 @@ class CartItemBaseForm(forms.Form):
   variant_field_names = []
 
   def __init__(self, data=None, *args, **kwargs):
+    #self.product = product
+    #print data
     # we should make this better....
-    if 'initial' in kwargs and 'variant' in kwargs['initial']:
-      self.variant = kwargs['initial'].get('variant')
-      self.product = self.variant.product
-      kwargs['initial']['variant_id'] = self.variant.id
-      kwargs['initial']['product_id'] = self.variant.product.id
-    else:
-      if 'product' in kwargs:
-        self.product = kwargs.pop('product')
+    if 'initial' in kwargs and 'variant_id' in kwargs['initial']:
+      self.variant = Variant.objects.get(id=kwargs['initial'].get('variant_id'))
+    
+    if 'initial' in kwargs and 'product_id' in kwargs['initial']:
+      #print kwargs['initial'].get('product_id')
+      self.product = Product.objects.get(id=kwargs['initial'].get('product_id'))
+    
+    # fill in product if not there  
+    if self.product is None and self.variant:
+      self.product = Product.objects.get(id=self.variant.product.id)
 
-    if self.product is None and 'product_id' in data:
-      self.product = Product.objects.get(id=data['product_id'])   
-
+    #print product  
     super(CartItemBaseForm, self).__init__(data=data, *args, **kwargs)
+    #print data
+    #print args
+
+    #print self.fields['variant_id'].initial
 
     # Initial field values
-    self.fields['product_id'].initial = self.product.id
+    #self.fields['product_id'].initial = self.product.id
 
+    # Buld our fields
+    self.build_fields()
+
+    #print _get_existing_variants_choices(product.variants.all(), ('frame', 'size'))
+
+  def build_fields(self):
     # Get product and variant
     product = self.product.get_subtype_instance()
-    variant = product.variants.all()[0].get_subtype_instance()
+
+    # Get variant
+    if self.variant:
+      variant = self.variant.get_subtype_instance()
+    else:
+      try:
+        variant = product.variants.all()[0].get_subtype_instance()
+      except:
+        return
+
+    # Set variant form fields
     self.variant_field_names = variant.form_fields()
 
     # Get our form fields and fill in values
     existing_choices = _get_existing_variants_choices(product.variants.all(), variant.form_fields())
     fields = forms.models.fields_for_model(variant, fields=variant.form_fields())
-    
+    #print fields
     for name, field in fields.iteritems():
       self.fields[name] = field
 
+    # Only show existing choices  
     for field_name, choices in existing_choices.items():
       for name, field in fields.iteritems():
         self.fields[field_name].widget.choices = choices
-    #print existing_choices
-    '''
-    for variant in product.variants.all():
-      variant =  variant.get_subtype_instance()
-      self.variant_field_names = variant.form_fields()
-      if len(self.variant_field_names ) != 0:
-        fields = forms.models.fields_for_model(variant, fields=self.variant_field_names)
-        for name, field in fields.iteritems():
-          #print field.choices
-          self.fields[name] = field
-    '''      
+   
     # Get defaults for variant fields      
-    if self.variant:
+    if variant:
       for name in self.variant_field_names:
-        self.fields[name].initial = getattr(self.variant, name)
-
-    #print _get_existing_variants_choices(product.variants.all(), ('frame', 'size'))
+        #print name
+        self.fields[name].initial = getattr(variant, name)
 
   def clean_quantity(self):
     quantity = self.cleaned_data['quantity']
