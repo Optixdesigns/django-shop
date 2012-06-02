@@ -3,6 +3,20 @@ from shop.cart.models import CartItem
 from shop.cart.bases import BaseCartItem
 from django import forms
 
+def _get_existing_variants_choices(queryset, field_names):
+    field2choices = {}
+    variants = queryset.values_list(*field_names)
+
+    if variants:
+        for index, existing_choices in enumerate(zip(*variants)):
+            field_name = field_names[index]
+            all_choices = queryset.model._meta.get_field(field_name).choices
+            field2choices[field_name] = [c for c in all_choices if c[0] in existing_choices]
+    else:
+        for field_name in field_names:
+            field2choices[field_name] = []
+    return field2choices
+
 choices = {}
 for x in range(30):
   choices[x] = x
@@ -37,19 +51,37 @@ class CartItemBaseForm(forms.Form):
     # Initial field values
     self.fields['product_id'].initial = self.product.id
 
+    # Get product and variant
     product = self.product.get_subtype_instance()
+    variant = product.variants.all()[0].get_subtype_instance()
+
+    # Get our form fields and fill in values
+    existing_choices = _get_existing_variants_choices(product.variants.all(), variant.form_fields())
+    fields = forms.models.fields_for_model(variant, fields=variant.form_fields())
+    
+    for name, field in fields.iteritems():
+      self.fields[name] = field
+
+    for field_name, choices in existing_choices.items():
+      for name, field in fields.iteritems():
+        self.fields[field_name].widget.choices = choices
+    #print existing_choices
+    '''
     for variant in product.variants.all():
       variant =  variant.get_subtype_instance()
       self.variant_field_names = variant.form_fields()
       if len(self.variant_field_names ) != 0:
         fields = forms.models.fields_for_model(variant, fields=self.variant_field_names)
         for name, field in fields.iteritems():
+          #print field.choices
           self.fields[name] = field
-
+    '''      
     # Get defaults for variant fields      
     if self.variant:
       for name in self.variant_field_names:
         self.fields[name].initial = getattr(self.variant, name)
+
+    #print _get_existing_variants_choices(product.variants.all(), ('frame', 'size'))
 
   def clean_quantity(self):
     quantity = self.cleaned_data['quantity']
