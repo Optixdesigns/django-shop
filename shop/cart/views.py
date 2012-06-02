@@ -37,7 +37,8 @@ def AddToCartView(request):
       success = False  
   
   if request.is_ajax():
-    return HttpResponse(simplejson.dumps({"success": success}), mimetype='application/javascript')
+    errors = dict([(k, form.error_class.as_text(v)) for k, v in form.errors.items()]) 
+    return HttpResponse(simplejson.dumps({"success": success, "errors": errors}), mimetype='application/javascript')
   
   return redirect('shop_cart')
 
