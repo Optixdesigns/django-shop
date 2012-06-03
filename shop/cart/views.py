@@ -47,21 +47,15 @@ def CartView(request):
 
   #print initial
   if request.POST:
-    #print request.POST
     formset = EditCartItemFormSet(request.POST)
 
     if formset.is_valid():
       for form in formset:
-        #print form.is_bound
         if form.cleaned_data['DELETE']:
           request.shop.cart.delete_item(form.variant)
-          #form.delete()
         else:  
           request.shop.cart.update_item(form.cleaned_data['variant'], form.variant, form.cleaned_data['quantity'])
-
-      # Reload formset    
-      #formset = EditCartItemFormSet(initial=initial)
-
+          
   else:
     initial = []
     for item in request.shop.cart.items.all():

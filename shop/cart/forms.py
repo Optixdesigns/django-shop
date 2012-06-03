@@ -25,7 +25,7 @@ for x in range(30):
 QUANTITY_CHOICES = tuple(choices.items())
 
 class CartItemBaseForm(forms.Form):
-  product_id = forms.CharField(widget=forms.widgets.HiddenInput(), required=True, show_hidden_initial=True)
+  product_id = forms.CharField(widget=forms.widgets.HiddenInput(), required=True)
   variant_id = forms.CharField(widget=forms.widgets.HiddenInput(), required=False)
   quantity = forms.IntegerField(min_value=1, initial=1, required=True, widget=forms.widgets.Select(choices=QUANTITY_CHOICES))
   
@@ -34,111 +34,41 @@ class CartItemBaseForm(forms.Form):
   variant_field_names = []
 
   def __init__(self, *args, **kwargs):
-    #self.product = product
-    #print data
-    # we should make this better....
-    #variant_id = 
-    #self.variant = self._raw_value('product_id')
-    '''
-    if 'initial' in kwargs and 'variant_id' in kwargs['initial']:
-      self.variant = Variant.objects.get(id=kwargs['initial'].get('variant_id'))  
-    
-    if 'initial' in kwargs and 'product_id' in kwargs['initial']:
-      #print kwargs['initial'].get('product_id')
-      self.product = Product.objects.get(id=kwargs['initial'].get('product_id'))
-    
-    # fill in product if not there  
-    if self.product is None and self.variant:
-      self.product = Product.objects.get(id=self.variant.product.id)
-    '''
-    #self.fields = copy.deepcopy(self.base_fields)  
-    #self.fields = {}
-
-    #print product  
     super(CartItemBaseForm, self).__init__(*args, **kwargs)
-    #print kwargs['initial'].get('product_id')
-    #print self.fields['quantity'].initial
-    #print kwargs['initial'].get('product_id') or self._raw_value('product_id')
-
-    print self.fields['product_id'].value()
+    self.product = self.get_product()
+    self.variant = self.get_variant()
     self.add_variant_fields()
-    self.get_variant_field_values(*args, **kwargs)
-    #print kwargs['data']
 
-    #print self._raw_value('product_id')
-    #self.add_variant_fields()
-    
+  def get_product(self):
+    product_id = self.__getitem__('product_id').value()
+    product = Product.objects.get(id=product_id).get_subtype_instance()
+    return product
 
-    
-
-    #print self.fields['variant_id'].initial
-    
-    #self._clean_fields()
-
-    
-    #print data
-    #print args
-
-    #print self.fields['variant_id'].initial
-
-    # Initial field values
-    #self.fields['product_id'].initial = self.product.id
-
-    # Buld our fields
-    
-
-    #super(CartItemBaseForm, self).__init__(data=data, *args, **kwargs)
-
-    #print _get_existing_variants_choices(product.variants.all(), ('frame', 'size'))
-  ''' 
-  def add_variant_fields(self):
-    fields = forms.models.fields_for_model(variant, fields=variant_field_names)
-    for name, field in fields.iteritems():
-      self.fields[name] = field
+  def get_variant(self):
+    variant_id = self.__getitem__('variant_id').value()
+    try:
+      variant = Variant.objects.get(id=variant_id).get_subtype_instance()
+      return variant
+    except:
+      return None
 
   def add_variant_fields(self):
-    fields = forms.models.fields_for_model(variant, fields=variant_field_names)
-    for name, field in fields.iteritems():
-      self.fields[name] = field    
-
-  '''
-  def get_initial_values(self):
-    # product_id
-    if self._raw_value('product_id'):
-      self.fields['product_id'].initial = self._raw_value('product_id')
-    elif 'initial' in kwargs and 'product_id' in kwargs['initial']:
-      self.fields['product_id'].initial = kwargs['initial'].get('product_id')
-
-    if self._raw_value('variant_id'):
-      self.fields['variant_id'].initial = self._raw_value('variant_id')
-    elif 'initial' in kwargs and 'variant_id' in kwargs['initial']:
-      self.fields['variant_id'].initial = kwargs['initial'].get('variant_id')  
-
-
-
-
-  def add_variant_fields(self):
-    # Get product and variant
-    product = self.product.get_subtype_instance()
-
-    # Get variant
+    # Get variant for its fields
+    #print self.product
+    #print self.product.variants.all()
     if self.variant:
-      variant = self.variant.get_subtype_instance()
+      variant = self.variant
     else:
-      try:
-        variant = product.variants.all()[0].get_subtype_instance()
-      except:
-        return
+      variant = self.product.variants.all()[0].get_subtype_instance()
 
     # Set variant form fields
     self.variant_field_names = variant.form_fields()
 
     # Get our form fields and fill in values
-    existing_choices = _get_existing_variants_choices(product.variants.all(), variant.form_fields())
-    
- 
+    existing_choices = _get_existing_variants_choices(self.product.variants.all(), variant.form_fields())
+
     fields = forms.models.fields_for_model(variant, fields=variant.form_fields())
-    #print fields
+
     for name, field in fields.iteritems():
       self.fields[name] = field
      
@@ -150,7 +80,6 @@ class CartItemBaseForm(forms.Form):
     # Get defaults for variant fields      
     if variant:
       for name in self.variant_field_names:
-        #print name
         self.fields[name].initial = getattr(variant, name)
 
   def clean_quantity(self):
@@ -158,8 +87,6 @@ class CartItemBaseForm(forms.Form):
     return quantity if quantity is not None else 1
 
   def clean(self):
-    self.extra_answers()
-
     filter_set = {}
 
     for name in self.variant_field_names:
@@ -180,17 +107,4 @@ class AddToCartForm(CartItemBaseForm):
   pass
 
 class EditCartItemForm(CartItemBaseForm):
- #variant = None
-
-  def __init__(self, data=None, *args, **kwargs):
-    #print kwargs
-    #print kwargs
-    #print kwargs['initial']['product_id']
-    #initial = kwargs['initial']
-    #product_id = 1
-    #product = Product.objects.get(id=product_id)
-    #product = None
-    #if 'initial' in kwargs and 'product_id' in kwargs['initial']:
-      #product = Product.objects.get(id=kwargs['initial'].get('product_id'))
-
-    super(EditCartItemForm, self).__init__(data=data, *args, **kwargs)
+  pass

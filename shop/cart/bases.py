@@ -69,9 +69,11 @@ class BaseCart(models.Model):
 
     def delete_item(self, variant):
       """
-      Add or update a cart item
+      Delete a cart item
       """
-      variant.delete()
+      item = self.items.get(variant=variant)
+      item.delete()
+
       self.save() # Save to update cart item dates
 
     def update(self):
