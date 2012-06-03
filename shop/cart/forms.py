@@ -19,7 +19,7 @@ def _get_existing_variants_choices(queryset, field_names):
     return field2choices
 
 choices = {}
-for x in range(30):
+for x in range(1, 30):
   choices[x] = x
 
 QUANTITY_CHOICES = tuple(choices.items())
