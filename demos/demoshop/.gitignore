@@ -1,0 +1,11 @@
+apps/odin
+apps/odin/*
+apps/service_links
+apps/service_links/*
+apps/hub
+apps/hub/*
+apps/share
+apps/share/*
+settings/local.py
+static
+static/*

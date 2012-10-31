@@ -8,7 +8,7 @@ setup(name='django-shop',
     author='Sjoerd Arendsen',
     url='https://github.com/Optixdesigns/django-shop',
     install_requires=('djutils', 'django-polymorphic',),
-    packages=find_packages(exclude=["example", "example.*"]),
+    packages=find_packages(exclude=["demos", "demos.*"]),
     include_package_data=True,
     zip_safe = False
 )
